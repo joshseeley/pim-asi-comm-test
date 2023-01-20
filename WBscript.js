@@ -26,17 +26,18 @@ buf.writeUInt16LE(crc16(buf.slice(0, -2)), codeLength);
 console.log("buffer: ");
 console.log(buf);
 
-const bufferTest = new ArrayBuffer(8);
-
+var myService;
 var myCharacteristic;
 var bluetoothDevice;
+var device;
+var data;
 
-function onStartButtonClick() {
+async function onStartButtonClick() {
     bluetoothDevice = null;
   
     console.log("Requesting Bluetooth Device...");
     
-    navigator.bluetooth
+    device = await navigator.bluetooth
       .requestDevice({
         filters: [{ services: ["6e400001-b5a3-f393-e0a9-e50e24dcca9e"] }],
       })
@@ -50,9 +51,10 @@ function onStartButtonClick() {
         return server.getPrimaryService("6e400001-b5a3-f393-e0a9-e50e24dcca9e");
       })
       .then((service) => {
+        myService = service;
         console.log("Getting Characteristic...");
-        return service.getCharacteristic("6e400003-b5a3-f393-e0a9-e50e24dcca9e");
-      })
+        return myService.getCharacteristic("6e400003-b5a3-f393-e0a9-e50e24dcca9e");
+      })   
       .then((characteristic) => {
         myCharacteristic = characteristic;
         return myCharacteristic.startNotifications().then((_) => {
@@ -68,35 +70,20 @@ function onStartButtonClick() {
       });
   }
 
-function onWriteButtonClick() {
+async function onWriteButtonClick() {
   console.log("Requesting Bluetooth Device...");
-  navigator.bluetooth
-    .requestDevice({
-      filters: [{ services: ["6e400001-b5a3-f393-e0a9-e50e24dcca9e"] }],
-    })
-    .then((device) => {
-      console.log("Connecting to GATT Server...");
-
-      return device.gatt.connect();
-    })
-    .then((server) => {
-      console.log("Getting Service...");
-      return server.getPrimaryService("6e400001-b5a3-f393-e0a9-e50e24dcca9e");
-    })
-    .then((service) => {
-      console.log("Getting Characteristic...");
-      return service.getCharacteristic("6e400002-b5a3-f393-e0a9-e50e24dcca9e");
-    })
-    .then((characteristic) => {
-      // Writing modbus data to controller.\
-      const resetEnergyExpended = buf; //Uint8Array.of(1, 3, 0, 0, 0, 3, 5, 203);
-      console.log("buffer:");
-      console.log(resetEnergyExpended);
-      return characteristic.writeValue(resetEnergyExpended);
-    })
-    .catch((error) => {
-      console.error(error);
-    });
+  
+  const resetEnergyExpended = buf; //Uint8Array.of(1, 3, 0, 0, 0, 3, 5, 203);
+  console.log("buffer:");
+  console.log(resetEnergyExpended);
+  
+  try {
+    const data = await myService.getCharacteristic("6e400002-b5a3-f393-e0a9-e50e24dcca9e")
+      data.writeValue(resetEnergyExpended);
+  } catch (error) {
+    console.error(error);
+  }
+  
 }
 
 function onStopButtonClick() {
