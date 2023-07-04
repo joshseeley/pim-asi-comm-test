@@ -1,1 +1,1 @@
-# pim-esup-prototype
+# pim-esup ASI comm checker
