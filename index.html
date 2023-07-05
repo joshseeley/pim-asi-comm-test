@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Bootstrap demo</title>
+    <title>ASI Comm Test</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -20,7 +20,7 @@
       <div class="container-fluid">
         <a class="navbar-brand" href="#">
           <img
-            src="/pim-esup-prototype/Assests/PIMLOGOWEB.png"
+            src="/Assests/PIMLOGOWEB.png"
             alt="Logo"
             width="60"
             class="d-inline-block align-text-top mx-3"
@@ -46,6 +46,17 @@
           
         </div>
         <div class="col-2"></div>
+      </div>
+      <div class="row">
+        <div class="col-2"></div>
+          <div class="col-4 gy-4">
+            <h5>Connection Status:</h5>
+          </div>
+          <div class="col-4 gy-4">
+            <h5 id="connectionStatus">IDLE</h5>
+          </div>
+          <div class="col-2"></div>
+        
       </div>
     </div>
 
@@ -83,29 +94,26 @@
               <th>Modbus Read Parameters</th>
             </tr>
           </table>
-          <table>
+          <table class="table">
             <tr>
-              <label for="startAddress"
-                >Start address (between 0 and 511):
-              </label>
-              <input
-                type="number"
-                id="startAddress"
-                value="265"
-                min="0"
-                max="511"
-              />
-
-              <label for="numRegisters"
-                >Number of Registers (between 1 and 125):
-              </label>
-              <input
-                type="number"
-                id="numRegisters"
-                value="6"
-                min="1"
-                max="125"
-              />
+              <th>Description</th>
+              <th>Value</th>
+            </tr>
+            <tr>
+              <td>Slave ID</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <td>Function Code</td>
+              <td>3</td>
+            </tr>
+            <tr>
+              <td>Start Adress</td>
+              <td>265</td>
+            </tr>
+            <tr>
+              <td>Number of Registers</td>
+              <td>6</td>
             </tr>
           </table>
           <br /><br />
@@ -114,20 +122,13 @@
           </button>
 
           <br /><br />
-          <div class="row">
-            <div class="col-6 gy-4">
-              <h5>Connection Status:</h5>
-            </div>
-            <div class="col-6 gy-4">
-              <h5 id="connectionStatus">IDLE</h5>
-            </div>
-          </div>
+          
 
           <br /><br />
           <div class="row">
             <div class="col-4 gy-4 text-center">
               <i class="fa-solid fa-battery-three-quarters fa-4x"></i>
-              <h4>Voltage</h4>
+              <h4>Battery (V)</h4>
               <h4 id="voltage">-</h4>
             </div>
 
@@ -141,6 +142,24 @@
               <i class="fa-solid fa-gauge-high fa-4x"></i>
               <h4>Throttle (%)</h4>
               <h4 id="throttle">-</h4>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-4 gy-4 text-center">
+              <i class="fa-solid fa-battery-three-quarters fa-4x"></i>
+              <h4>Battery (%)</h4>
+              <h4 id="charge">-</h4>
+            </div>
+
+            <div class="col-4 gy-4 text-center">
+              <i class="fa-solid fa-bolt fa-4x"></i>
+              <h4>Power (W)</h4>
+              <h4 id="power">-</h4>
+            </div>
+
+            <div class="col-4 gy-4 text-center">
+              <i class="fa-solid fa-triangle-exclamation fa-4x"></i>              <h4>Last Fault (BitArray)</h4>
+              <h4 id="lastFault">-</h4>
             </div>
           </div>
         </div>

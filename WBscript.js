@@ -19,9 +19,36 @@ disconnectButton.addEventListener("click", onDisconnectButtonClick);
 //Read Request - ASI Modbus parameters
 var address = 1; //Slave ID. do not modify
 var code = 3; //Function code for read request 0x03
-var dataAddress = document.getElementById("startAddress");; //Data Address of the first register.
-var length = document.getElementById("numRegisters");; //total number of registers requested.
+var dataAddress = 265;
+var length = 6;
 var codeLength = 6; //variable used for crc code  
+
+//Testing--------------
+var buffer = new ArrayBuffer(codeLength + 2);
+var view = new DataView(buffer);
+
+view.setInt8(0, address);
+view.setInt8(1, code);
+view.setInt16(2, dataAddress);
+view.setInt16(4, length);
+view.setInt16(6, crc16(view));
+
+var uintArray = new Uint8Array( buffer , 0 , codeLength + 2 );
+
+//sample slice code **** 
+// const sliced = new Uint8Array(buffer.slice(4, 12));
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer/slice
+
+// uintArray = new Uint8Array( buffer , byteOffset , length );
+var uintArray = new Uint8Array( buffer , 0 , codeLength + 2 );
+
+console.log("test");
+console.log(uintArray);
+
+console.log("View..."); 
+console.log(buffer);
+
+//Testing--------------
 
 //Use Ethereum array buffer library for testing
 var buf = ethereumjs.Buffer.Buffer.alloc(codeLength + 2); // add 2 crc bytes
@@ -31,6 +58,10 @@ buf.writeUInt16BE(dataAddress, 2);
 buf.writeUInt16BE(length, 4);
 // add crc bytes to buffer
 buf.writeUInt16LE(crc16(buf.slice(0, -2)), codeLength);
+
+var testSlice = buf.slice(0, -2);
+console.log("testSlice");
+console.log(testSlice);
 
 console.log("buffer: ");
 console.log(buf);
@@ -97,7 +128,7 @@ async function onWriteButtonClick() {
     const data = await myService.getCharacteristic("6e400002-b5a3-f393-e0a9-e50e24dcca9e")
       data.writeValue(modbusData);
   } catch (error) {
-    console.error(error);
+    console.log(error);
   }
   
 }
@@ -126,36 +157,29 @@ function handleNotifications(event) {
   console.log("handling...");
   connectionStatus.textContent = "handling...";
   
-
   let value = event.target.value;
-  let lengthArray = value.byteLength;
-
+  
+  console.log(value);
+  console.log(value.getInt16(3, false)/32); //volts
+  console.log(value.getInt16(5, false)/32); //amps
+  console.log(value.getInt16(7, false)/1);  //battery state of charge %
+  console.log(value.getInt16(9, false)/1); //power in watts
+  console.log(value.getInt16(11, false)); //Last Fault Bit Array
+  console.log(value.getInt16(13, false)/4096); //throttle voltage
  
-  let dataArray = [];
-  let arrayIndex = 0;
-
-  for (let i = 0; i < lengthArray; i += 1) {    
-    
-    if (i % 2==0) {
-      console.log('skip');
-    } else if (i > 2) {
-      dataArray[arrayIndex] = value.getInt16(i);
-      arrayIndex += 1;
-    }    
-  } 
-
-  console.log(dataArray);
-
-  let voltage = dataArray[0]/32;
-  let current = dataArray[1]/32;
-  let power = dataArray[3];
-  let throttle = dataArray[5]/4096;
-
-  console.log(voltage, current, power, throttle);
+  let voltage = value.getInt16(3, false)/32;
+  let current = value.getInt16(5, false)/32;
+  let charge = value.getInt16(7, false)/1;
+  let power = value.getInt16(9, false)/1;
+  let lastFault = value.getInt16(11, false)/1;
+  let throttle = value.getInt16(13, false)/4096;
       
   document.getElementById("voltage").innerHTML = voltage;
   document.getElementById("amperage").innerHTML = current;
   document.getElementById("throttle").innerHTML = throttle;
+  document.getElementById("power").innerHTML = power;
+  document.getElementById("charge").innerHTML = charge;
+  document.getElementById("lastFault").innerHTML = lastFault;
 
 }
 
