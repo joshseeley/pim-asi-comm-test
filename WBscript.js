@@ -16,12 +16,12 @@ disconnectButton.addEventListener("click", onDisconnectButtonClick);
  * Throttle voltage: address 270, scale 4096
  */
 
-//ASI Modbus parameters
-var codeLength = 6;
-var address = 1; //address the slave unit address. do not modify
-var code = 3; //the function to call next.
-var dataAddress = 265; //Data Address of the first register.
-var length = 6; //total number of registers requested.
+//Read Request - ASI Modbus parameters
+var address = 1; //Slave ID. do not modify
+var code = 3; //Function code for read request 0x03
+var dataAddress = document.getElementById("startAddress");; //Data Address of the first register.
+var length = document.getElementById("numRegisters");; //total number of registers requested.
+var codeLength = 6; //variable used for crc code  
 
 //Use Ethereum array buffer library for testing
 var buf = ethereumjs.Buffer.Buffer.alloc(codeLength + 2); // add 2 crc bytes

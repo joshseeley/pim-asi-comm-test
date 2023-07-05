@@ -16,23 +16,41 @@
     ></script>
   </head>
   <body>
-    <nav class="navbar bg-body-tertiary">
+    <nav class="navbar navbar-light" style="background-color: #3e75ad">
       <div class="container-fluid">
         <a class="navbar-brand" href="#">
           <img
-            src="/Assests/PIMLOGOWEB.png"
+            src="/pim-esup-prototype/Assests/PIMLOGOWEB.png"
             alt="Logo"
             width="60"
             class="d-inline-block align-text-top mx-3"
           />
-          Power in Motion - ASI Comm Tester
+          Power in Motion: ASI Comm Tester
         </a>
       </div>
     </nav>
-    <hr>
-    <div class="row"></div>
+    <br />
+    <div class="container">
+      <div class="row">
+        <div class="col-2"></div>
+        <div class="col-8">
+          <button type="button" class="btn btn-primary" id="connectButton">
+            Connect
+          </button>
+          <button type="button" class="btn btn-primary" id="disconnectButton">
+            Disconnect
+          </button>
+          <button type="button" class="btn btn-primary" id="stopButton">
+            Stop Notifications
+          </button>
+          
+        </div>
+        <div class="col-2"></div>
+      </div>
+    </div>
+
     <br /><br />
-    <div class="container text-center">
+    <div class="container">
       <div class="row">
         <div class="col-2"></div>
         <div class="col-8">
@@ -59,29 +77,52 @@
               <td>6e400002-b5a3-f393-e0a9-e50e24dcca9e</td>
             </tr>
           </table>
+
+          <table class="table table-sm">
+            <tr>
+              <th>Modbus Read Parameters</th>
+            </tr>
+          </table>
+          <table>
+            <tr>
+              <label for="startAddress"
+                >Start address (between 0 and 511):
+              </label>
+              <input
+                type="number"
+                id="startAddress"
+                value="265"
+                min="0"
+                max="511"
+              />
+
+              <label for="numRegisters"
+                >Number of Registers (between 1 and 125):
+              </label>
+              <input
+                type="number"
+                id="numRegisters"
+                value="6"
+                min="1"
+                max="125"
+              />
+            </tr>
+          </table>
           <br /><br />
           <button type="button" class="btn btn-primary" id="writeButton">
             Write to modbus
           </button>
-          <button type="button" class="btn btn-primary" id="stopButton">
-            Stop Notifications
-          </button>
-          <button type="button" class="btn btn-primary" id="connectButton">
-            Connect
-          </button>
-          <button type="button" class="btn btn-primary" id="disconnectButton">
-            Disconnect
-          </button>
+
           <br /><br />
           <div class="row">
             <div class="col-6 gy-4">
-            <h5>Connection Status:</h5>
+              <h5>Connection Status:</h5>
+            </div>
+            <div class="col-6 gy-4">
+              <h5 id="connectionStatus">IDLE</h5>
+            </div>
           </div>
-          <div class="col-6 gy-4">
-            <h5 id="connectionStatus">IDLE</h5>
-          </div>
-          </div>
-          
+
           <br /><br />
           <div class="row">
             <div class="col-4 gy-4 text-center">
