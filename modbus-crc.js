@@ -12,6 +12,7 @@ function crc16(buffer) {
           crc = crc ^ 0xa001;
         }
       }
-    }
+    }      
+
     return crc;
   }

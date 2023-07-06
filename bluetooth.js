@@ -16,6 +16,11 @@ disconnectButton.addEventListener("click", onDisconnectButtonClick);
  * Throttle voltage: address 270, scale 4096
  */
 
+function swap16(val) {
+  return ((val & 0xFF) << 8)
+         | ((val >> 8) & 0xFF);
+}
+
 //Read Request - ASI Modbus parameters
 var address = 1; //Slave ID. do not modify
 var code = 3; //Function code for read request 0x03
@@ -23,56 +28,35 @@ var dataAddress = 265;
 var length = 6;
 var codeLength = 6; //variable used for crc code  
 
-//Testing--------------
+//Create modbus read request packet
 var buffer = new ArrayBuffer(codeLength + 2);
 var view = new DataView(buffer);
+var uintArray = new Uint8Array( buffer , 0 , codeLength);
 
 view.setInt8(0, address);
 view.setInt8(1, code);
 view.setInt16(2, dataAddress);
 view.setInt16(4, length);
-view.setInt16(6, crc16(view));
+view.setInt16(6, swap16(crc16(uintArray)));
 
-var uintArray = new Uint8Array( buffer , 0 , codeLength + 2 );
+var modbusReadRequest = new Uint8Array( buffer , 0 , codeLength + 2);
 
-//sample slice code **** 
-// const sliced = new Uint8Array(buffer.slice(4, 12));
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer/slice
-
-// uintArray = new Uint8Array( buffer , byteOffset , length );
-var uintArray = new Uint8Array( buffer , 0 , codeLength + 2 );
-
-console.log("test");
-console.log(uintArray);
+console.log("modbusReadRequest");
+console.log(modbusReadRequest);
 
 console.log("View..."); 
 console.log(buffer);
 
-//Testing--------------
-
-//Use Ethereum array buffer library for testing
-var buf = ethereumjs.Buffer.Buffer.alloc(codeLength + 2); // add 2 crc bytes
-buf.writeUInt8(address, 0);
-buf.writeUInt8(code, 1);
-buf.writeUInt16BE(dataAddress, 2);
-buf.writeUInt16BE(length, 4);
-// add crc bytes to buffer
-buf.writeUInt16LE(crc16(buf.slice(0, -2)), codeLength);
-
-var testSlice = buf.slice(0, -2);
-console.log("testSlice");
-console.log(testSlice);
-
-console.log("buffer: ");
-console.log(buf);
-
+//Bluetooth variables
 var myService;
 var myCharacteristic;
 var bluetoothDevice;
 var device;
 var data;
 
-//Connects to GATT server and starts notifications
+//Bluetooth LE communication
+//Connects to GATT server, get primary service and characteristic 
+//and starts notifications
 async function onStartButtonClick() {
     bluetoothDevice = null;
   
@@ -120,7 +104,7 @@ async function onStartButtonClick() {
 async function onWriteButtonClick() {
   console.log("Requesting Bluetooth Device...");
   
-  const modbusData = buf; //Uint8Array.of(1, 3, 0, 0, 0, 3, 5, 203);
+  const modbusData = modbusReadRequest; 
   console.log("buffer:");
   console.log(modbusData);
   
